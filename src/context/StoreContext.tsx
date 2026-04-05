@@ -12,6 +12,7 @@ type Action =
   | { type: 'DELETE_HABIT'; id: string }
   | { type: 'TOGGLE_LIKE'; id: string }
   | { type: 'TOGGLE_COMPLETION'; habitId: string }
+  | { type: 'REORDER_HABITS'; fromId: string; toId: string }
   | { type: 'SET_FILTER'; filter: Partial<FilterState> }
   | { type: 'SET_HABITS'; habits: Habit[] }
   | { type: 'SET_COMPLETIONS'; completions: Completion[] };
@@ -45,6 +46,16 @@ function reducer(state: StoreState, action: Action): StoreState {
         ...state,
         habits: state.habits.map((h) => h.id === action.habit.id ? action.habit : h),
       };
+
+    case 'REORDER_HABITS': {
+      const list = [...state.habits];
+      const fromIdx = list.findIndex((h) => h.id === action.fromId);
+      const toIdx = list.findIndex((h) => h.id === action.toId);
+      if (fromIdx === -1 || toIdx === -1 || fromIdx === toIdx) return state;
+      const [moved] = list.splice(fromIdx, 1);
+      list.splice(toIdx, 0, moved);
+      return { ...state, habits: list };
+    }
 
     case 'DELETE_HABIT':
       return {

@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { Plus, Search, ListChecks } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Plus, Search, ListChecks, GripVertical } from 'lucide-react';
 import { useFilteredHabits, useStore, useSetFilter } from '../context/StoreContext';
 import { CATEGORY_META, ALL_CATEGORIES } from '../lib/categoryMeta';
-import type { Category, FilterStatus } from '../types';
+import type { Category, FilterStatus, Habit } from '../types';
 import { HabitCard } from '../components/habits/HabitCard';
 import { AddHabitModal } from '../components/habits/AddHabitModal';
 import { Button } from '../components/shared/Button';
@@ -15,12 +15,92 @@ const STATUS_TABS: { id: FilterStatus; label: string }[] = [
   { id: 'favorites', label: 'Favorites' },
 ];
 
+function DraggableList({ habits }: { habits: Habit[] }) {
+  const { dispatch } = useStore();
+  const dragId = useRef<string | null>(null);
+  const [overId, setOverId] = useState<string | null>(null);
+
+  function onDragStart(id: string) {
+    dragId.current = id;
+  }
+
+  function onDragOver(e: React.DragEvent, id: string) {
+    e.preventDefault();
+    if (dragId.current !== id) setOverId(id);
+  }
+
+  function onDrop(toId: string) {
+    if (dragId.current && dragId.current !== toId) {
+      dispatch({ type: 'REORDER_HABITS', fromId: dragId.current, toId });
+    }
+    dragId.current = null;
+    setOverId(null);
+  }
+
+  function onDragEnd() {
+    dragId.current = null;
+    setOverId(null);
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {habits.map((h) => {
+        const isDragging = dragId.current === h.id;
+        const isOver = overId === h.id;
+        return (
+          <div
+            key={h.id}
+            draggable
+            onDragStart={() => onDragStart(h.id)}
+            onDragOver={(e) => onDragOver(e, h.id)}
+            onDrop={() => onDrop(h.id)}
+            onDragEnd={onDragEnd}
+            style={{
+              display: 'flex',
+              alignItems: 'stretch',
+              gap: 0,
+              opacity: isDragging ? 0.4 : 1,
+              borderRadius: 16,
+              outline: isOver ? '2px solid var(--primary)' : '2px solid transparent',
+              outlineOffset: 2,
+              transition: 'opacity 0.15s, outline-color 0.15s',
+              cursor: 'default',
+            }}
+          >
+            {/* Drag handle */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                paddingRight: 6,
+                paddingLeft: 2,
+                color: 'var(--text-subtle)',
+                cursor: 'grab',
+                flexShrink: 0,
+                touchAction: 'none',
+              }}
+              title="Drag to reorder"
+            >
+              <GripVertical size={16} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <HabitCard habit={h} />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export function HabitsPage() {
   const [showModal, setShowModal] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const { filter } = useStore();
   const setFilter = useSetFilter();
   const filtered = useFilteredHabits();
+
+  const isFiltered = filter.status !== 'all' || filter.category !== 'all' || filter.search.length > 0;
 
   // Keyboard shortcut: N to open add modal
   useEffect(() => {
@@ -148,27 +228,32 @@ export function HabitsPage() {
         </div>
       </div>
 
-      {/* Habits grid */}
+      {/* Habits list */}
       {filtered.length === 0 ? (
         <EmptyState
           icon={<ListChecks />}
           title="No habits found"
-          description={filter.search || filter.category !== 'all' || filter.status !== 'all'
+          description={isFiltered
             ? 'Try adjusting your filters.'
             : 'Start building better habits! Press N or click the button above.'}
-          action={!filter.search && filter.category === 'all' && filter.status === 'all'
+          action={!isFiltered
             ? <Button onClick={() => setShowModal(true)}><Plus size={14} /> New Habit</Button>
             : undefined
           }
         />
-      ) : (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-          gap: 14,
-        }}>
+      ) : isFiltered ? (
+        // When filtered: plain grid, no drag handles (order change wouldn't persist correctly)
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 14 }}>
           {filtered.map((h) => <HabitCard key={h.id} habit={h} />)}
         </div>
+      ) : (
+        // No filters: draggable single-column list
+        <>
+          <p style={{ margin: '0 0 10px', fontSize: 12, color: 'var(--text-subtle)', display: 'flex', alignItems: 'center', gap: 4 }}>
+            <GripVertical size={13} /> Drag the handle to reorder
+          </p>
+          <DraggableList habits={filtered} />
+        </>
       )}
 
       {showModal && <AddHabitModal onClose={() => setShowModal(false)} />}
