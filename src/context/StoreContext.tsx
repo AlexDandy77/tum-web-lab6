@@ -8,6 +8,7 @@ import { today } from '../lib/streaks';
 
 type Action =
   | { type: 'ADD_HABIT'; habit: Habit }
+  | { type: 'UPDATE_HABIT'; habit: Habit }
   | { type: 'DELETE_HABIT'; id: string }
   | { type: 'TOGGLE_LIKE'; id: string }
   | { type: 'TOGGLE_COMPLETION'; habitId: string }
@@ -38,6 +39,12 @@ function reducer(state: StoreState, action: Action): StoreState {
 
     case 'ADD_HABIT':
       return { ...state, habits: [action.habit, ...state.habits] };
+
+    case 'UPDATE_HABIT':
+      return {
+        ...state,
+        habits: state.habits.map((h) => h.id === action.habit.id ? action.habit : h),
+      };
 
     case 'DELETE_HABIT':
       return {

@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Heart, Trash2, CheckCircle, Circle, Flame, Zap } from 'lucide-react';
+import { Heart, Trash2, CheckCircle, Circle, Flame, Zap, Pencil } from 'lucide-react';
 import type { Habit } from '../../types';
 import { useStore, useToast } from '../../context/StoreContext';
 import { computeStats } from '../../lib/streaks';
 import { Badge } from '../shared/Badge';
 import { Modal } from '../shared/Modal';
 import { Button } from '../shared/Button';
+import { EditHabitModal } from './EditHabitModal';
 
 interface Props {
   habit: Habit;
@@ -15,6 +16,7 @@ export function HabitCard({ habit }: Props) {
   const { completions, dispatch } = useStore();
   const { showToast } = useToast();
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
   const [checkAnim, setCheckAnim] = useState(false);
 
   const stats = computeStats(habit, completions);
@@ -134,6 +136,25 @@ export function HabitCard({ habit }: Props) {
               <Heart size={15} fill={habit.liked ? '#ef4444' : 'none'} strokeWidth={2} />
             </button>
             <button
+              onClick={() => setShowEdit(true)}
+              aria-label="Edit habit"
+              style={{
+                background: 'var(--bg-muted)',
+                border: 'none',
+                borderRadius: 8,
+                width: 32,
+                height: 32,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: 'var(--text-subtle)',
+                transition: 'all 0.15s',
+              }}
+            >
+              <Pencil size={14} />
+            </button>
+            <button
               onClick={() => setConfirmDelete(true)}
               aria-label="Delete habit"
               style={{
@@ -204,6 +225,9 @@ export function HabitCard({ habit }: Props) {
           )}
         </div>
       </div>
+
+      {/* Edit modal */}
+      {showEdit && <EditHabitModal habit={habit} onClose={() => setShowEdit(false)} />}
 
       {/* Confirm delete modal */}
       {confirmDelete && (
