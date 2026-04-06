@@ -102,11 +102,20 @@ function reducer(state: StoreState, action: Action): StoreState {
 
 // ── Context ───────────────────────────────────────────────────────────────────
 
+export interface ExportData {
+  version: 1;
+  exportedAt: string;
+  habits: Habit[];
+  completions: Completion[];
+}
+
 interface StoreContextValue {
   habits: Habit[];
   completions: Completion[];
   filter: FilterState;
   dispatch: React.Dispatch<Action>;
+  exportData: () => void;
+  importData: (json: string) => string | null; // returns error string or null on success
 }
 
 const StoreContext = createContext<StoreContextValue | null>(null);
@@ -179,6 +188,37 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setStoredTheme((t) => (t === 'light' ? 'dark' : 'light'));
   }, [setStoredTheme]);
 
+  const exportData = useCallback(() => {
+    const payload: ExportData = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      habits: state.habits,
+      completions: state.completions,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `habitbuilder-export-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [state.habits, state.completions]);
+
+  const importData = useCallback((json: string): string | null => {
+    try {
+      const parsed = JSON.parse(json) as Partial<ExportData>;
+      if (parsed.version !== 1) return 'Unsupported file version.';
+      if (!Array.isArray(parsed.habits) || !Array.isArray(parsed.completions)) {
+        return 'Invalid file format: missing habits or completions.';
+      }
+      dispatch({ type: 'SET_HABITS', habits: parsed.habits });
+      dispatch({ type: 'SET_COMPLETIONS', completions: parsed.completions });
+      return null;
+    } catch {
+      return 'Could not parse file. Make sure it is a valid HabitBuilder JSON export.';
+    }
+  }, [dispatch]);
+
   const showToast = useCallback((message: string, type: Toast['type'] = 'success') => {
     const id = crypto.randomUUID();
     setToasts((prev) => [...prev, { id, message, type }]);
@@ -193,7 +233,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   return (
     <ThemeContext.Provider value={{ theme: storedTheme, toggleTheme }}>
       <ToastContext.Provider value={{ toasts, showToast }}>
-        <StoreContext.Provider value={{ habits: state.habits, completions: state.completions, filter: state.filter, dispatch }}>
+        <StoreContext.Provider value={{ habits: state.habits, completions: state.completions, filter: state.filter, dispatch, exportData, importData }}>
           {children}
         </StoreContext.Provider>
       </ToastContext.Provider>
