@@ -58,22 +58,20 @@ function DraggableList({ habits }: { habits: Habit[] }) {
             style={{
               display: 'flex',
               alignItems: 'stretch',
-              gap: 0,
+              minWidth: 0,
               opacity: isDragging ? 0.4 : 1,
               borderRadius: 16,
               outline: isOver ? '2px solid var(--primary)' : '2px solid transparent',
               outlineOffset: 2,
               transition: 'opacity 0.15s, outline-color 0.15s',
-              cursor: 'default',
             }}
           >
-            {/* Drag handle */}
+            {/* Drag handle — inside card boundary */}
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                paddingRight: 6,
-                paddingLeft: 2,
+                padding: '0 4px 0 0',
                 color: 'var(--text-subtle)',
                 cursor: 'grab',
                 flexShrink: 0,
@@ -81,7 +79,7 @@ function DraggableList({ habits }: { habits: Habit[] }) {
               }}
               title="Drag to reorder"
             >
-              <GripVertical size={16} />
+              <GripVertical size={15} />
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <HabitCard habit={h} />
@@ -122,19 +120,36 @@ export function HabitsPage() {
   return (
     <div style={{ maxWidth: 960, margin: '0 auto', padding: '24px 20px', flex: 1 }}>
       {/* Header row */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, gap: 12, flexWrap: 'wrap' }}>
-        <div>
-          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: 'var(--text)' }}>My Habits</h1>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, gap: 12 }}>
+        <div style={{ minWidth: 0 }}>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: 'var(--text)' }}>My Habits</h1>
           <p style={{ margin: '2px 0 0', color: 'var(--text-muted)', fontSize: 13 }}>
             {filtered.length} habit{filtered.length !== 1 ? 's' : ''}
             {filter.status !== 'all' || filter.category !== 'all' || filter.search ? ' matching filters' : ' total'}
           </p>
         </div>
-        <Button variant="primary" onClick={() => setShowModal(true)}>
+        <button
+          onClick={() => setShowModal(true)}
+          aria-label="Add new habit"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            background: 'var(--primary)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 12,
+            padding: '8px 16px',
+            fontWeight: 700,
+            fontSize: 14,
+            cursor: 'pointer',
+            flexShrink: 0,
+            whiteSpace: 'nowrap',
+          }}
+        >
           <Plus size={16} />
-          New Habit
-          <span style={{ fontSize: 11, opacity: 0.7, background: 'rgba(255,255,255,0.2)', padding: '1px 5px', borderRadius: 4 }}>N</span>
-        </Button>
+          <span className="btn-label">New Habit</span>
+        </button>
       </div>
 
       {/* Filter bar */}

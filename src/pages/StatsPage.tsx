@@ -86,14 +86,14 @@ export function StatsPage() {
       </div>
 
       {/* Summary cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12, marginBottom: 24 }}>
         <StatCard label="Active Habits" value={habits.length} icon={<CheckCircle size={20} />} color="#7c3aed" />
         <StatCard label="Total Completions" value={totalCompletions} icon={<Zap size={20} />} color="#2563eb" />
         <StatCard label="Best Streak" value={`${bestStreak} days`} icon={<Flame size={20} />} color="#f97316" />
         <StatCard label="Avg Completion Rate" value={`${avgRate}%`} icon={<BarChart2 size={20} />} color="#22c55e" />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16, alignItems: 'start' }}>
+      <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16, alignItems: 'start' }}>
         {/* Category breakdown */}
         <div style={{
           background: 'var(--bg-card)',

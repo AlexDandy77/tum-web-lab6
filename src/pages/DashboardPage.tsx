@@ -72,7 +72,7 @@ export function DashboardPage() {
           action={<Button onClick={() => setShowModal(true)}><Plus size={14} /> Add First Habit</Button>}
         />
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
 
           {/* Progress rings — full width */}
           <div style={{
@@ -83,8 +83,9 @@ export function DashboardPage() {
             gridColumn: '1 / -1',
             display: 'flex',
             alignItems: 'center',
-            gap: 32,
+            gap: 24,
             flexWrap: 'wrap',
+            justifyContent: 'flex-start',
           }}>
             {/* Daily ring */}
             {dailyHabits.length > 0 && (

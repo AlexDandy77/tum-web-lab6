@@ -59,8 +59,8 @@ export function HabitCard({ habit }: Props) {
           boxShadow: stats.completedToday ? '0 0 0 3px var(--primary-light)' : 'none',
         }}
       >
-        {/* Top row */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+        {/* Top row: check + name */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, minWidth: 0 }}>
           {/* Check button */}
           <button
             onClick={handleToggle}
@@ -78,12 +78,12 @@ export function HabitCard({ habit }: Props) {
             }}
           >
             {stats.completedToday
-              ? <CheckCircle size={24} strokeWidth={2.5} />
-              : <Circle size={24} strokeWidth={1.5} />
+              ? <CheckCircle size={22} strokeWidth={2.5} />
+              : <Circle size={22} strokeWidth={1.5} />
             }
           </button>
 
-          {/* Name + meta */}
+          {/* Name + description */}
           <div style={{ flex: 1, minWidth: 0 }}>
             <p style={{
               margin: 0,
@@ -113,71 +113,10 @@ export function HabitCard({ habit }: Props) {
               </p>
             )}
           </div>
-
-          {/* Actions */}
-          <div style={{ display: 'flex', gap: 4, flexShrink: 0 }}>
-            <button
-              onClick={handleLike}
-              aria-label={habit.liked ? 'Unfavorite' : 'Favorite'}
-              style={{
-                background: habit.liked ? 'rgba(239,68,68,0.1)' : 'var(--bg-muted)',
-                border: 'none',
-                borderRadius: 8,
-                width: 32,
-                height: 32,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                color: habit.liked ? '#ef4444' : 'var(--text-subtle)',
-                transition: 'all 0.15s',
-              }}
-            >
-              <Heart size={15} fill={habit.liked ? '#ef4444' : 'none'} strokeWidth={2} />
-            </button>
-            <button
-              onClick={() => setShowEdit(true)}
-              aria-label="Edit habit"
-              style={{
-                background: 'var(--bg-muted)',
-                border: 'none',
-                borderRadius: 8,
-                width: 32,
-                height: 32,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                color: 'var(--text-subtle)',
-                transition: 'all 0.15s',
-              }}
-            >
-              <Pencil size={14} />
-            </button>
-            <button
-              onClick={() => setConfirmDelete(true)}
-              aria-label="Delete habit"
-              style={{
-                background: 'var(--bg-muted)',
-                border: 'none',
-                borderRadius: 8,
-                width: 32,
-                height: 32,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                color: 'var(--text-subtle)',
-                transition: 'all 0.15s',
-              }}
-            >
-              <Trash2 size={15} />
-            </button>
-          </div>
         </div>
 
-        {/* Bottom row */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+        {/* Bottom row: badges + actions */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
           <Badge category={habit.category} />
 
           <span style={{
@@ -191,7 +130,6 @@ export function HabitCard({ habit }: Props) {
             {freqLabel}
           </span>
 
-          {/* Streak */}
           {stats.currentStreak > 0 && (
             <span style={{
               display: 'inline-flex',
@@ -205,11 +143,10 @@ export function HabitCard({ habit }: Props) {
               borderRadius: 9999,
             }}>
               <Flame size={12} className="animate-flame" />
-              {stats.currentStreak} streak
+              {stats.currentStreak}
             </span>
           )}
 
-          {/* Completion rate */}
           {stats.totalCompletions > 0 && (
             <span style={{
               display: 'inline-flex',
@@ -217,12 +154,72 @@ export function HabitCard({ habit }: Props) {
               gap: 3,
               fontSize: 12,
               color: 'var(--text-subtle)',
-              marginLeft: 'auto',
             }}>
               <Zap size={11} />
               {Math.round(stats.completionRate * 100)}%
             </span>
           )}
+
+          {/* Actions pushed to the right */}
+          <div style={{ display: 'flex', gap: 4, marginLeft: 'auto', flexShrink: 0 }}>
+            <button
+              onClick={handleLike}
+              aria-label={habit.liked ? 'Unfavorite' : 'Favorite'}
+              style={{
+                background: habit.liked ? 'rgba(239,68,68,0.1)' : 'var(--bg-muted)',
+                border: 'none',
+                borderRadius: 8,
+                width: 30,
+                height: 30,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: habit.liked ? '#ef4444' : 'var(--text-subtle)',
+                transition: 'all 0.15s',
+              }}
+            >
+              <Heart size={14} fill={habit.liked ? '#ef4444' : 'none'} strokeWidth={2} />
+            </button>
+            <button
+              onClick={() => setShowEdit(true)}
+              aria-label="Edit habit"
+              style={{
+                background: 'var(--bg-muted)',
+                border: 'none',
+                borderRadius: 8,
+                width: 30,
+                height: 30,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: 'var(--text-subtle)',
+                transition: 'all 0.15s',
+              }}
+            >
+              <Pencil size={13} />
+            </button>
+            <button
+              onClick={() => setConfirmDelete(true)}
+              aria-label="Delete habit"
+              style={{
+                background: 'var(--bg-muted)',
+                border: 'none',
+                borderRadius: 8,
+                width: 30,
+                height: 30,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: 'var(--text-subtle)',
+                transition: 'all 0.15s',
+              }}
+            >
+              <Trash2 size={14} />
+            </button>
+          </div>
         </div>
       </div>
 
