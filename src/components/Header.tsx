@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Sun, Moon, Flame, Database, Menu, X } from 'lucide-react';
-import { useTheme } from '../context/StoreContext';
+import { useTheme } from '../context/useStore';
 import { DataPanel } from './DataPanel';
 import type { Page } from '../types';
 

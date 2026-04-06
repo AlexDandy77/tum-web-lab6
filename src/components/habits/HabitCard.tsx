@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Heart, Trash2, CheckCircle, Circle, Flame, Zap, Pencil } from 'lucide-react';
 import type { Habit } from '../../types';
-import { useStore, useToast } from '../../context/StoreContext';
+import { useStore, useToast } from '../../context/useStore';
 import { computeStats } from '../../lib/streaks';
 import { Badge } from '../shared/Badge';
 import { Modal } from '../shared/Modal';

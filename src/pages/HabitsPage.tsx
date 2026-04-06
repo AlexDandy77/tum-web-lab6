@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Plus, Search, ListChecks, GripVertical } from 'lucide-react';
-import { useFilteredHabits, useStore, useSetFilter } from '../context/StoreContext';
+import { useFilteredHabits, useStore, useSetFilter } from '../context/useStore';
 import { CATEGORY_META, ALL_CATEGORIES } from '../lib/categoryMeta';
 import type { Category, FilterStatus, Habit } from '../types';
 import { HabitCard } from '../components/habits/HabitCard';
@@ -17,11 +17,14 @@ const STATUS_TABS: { id: FilterStatus; label: string }[] = [
 
 function DraggableList({ habits }: { habits: Habit[] }) {
   const { dispatch } = useStore();
+  // dragId ref is only ever read inside event handlers, never during render
   const dragId = useRef<string | null>(null);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
 
   function onDragStart(id: string) {
     dragId.current = id;
+    setDraggingId(id);
   }
 
   function onDragOver(e: React.DragEvent, id: string) {
@@ -34,18 +37,20 @@ function DraggableList({ habits }: { habits: Habit[] }) {
       dispatch({ type: 'REORDER_HABITS', fromId: dragId.current, toId });
     }
     dragId.current = null;
+    setDraggingId(null);
     setOverId(null);
   }
 
   function onDragEnd() {
     dragId.current = null;
+    setDraggingId(null);
     setOverId(null);
   }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
       {habits.map((h) => {
-        const isDragging = dragId.current === h.id;
+        const isDragging = draggingId === h.id;
         const isOver = overId === h.id;
         return (
           <div

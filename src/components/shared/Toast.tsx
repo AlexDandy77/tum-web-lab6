@@ -1,7 +1,7 @@
 import { createPortal } from 'react-dom';
 import { CheckCircle, AlertCircle, Info } from 'lucide-react';
-import { useToast } from '../../context/StoreContext';
-import type { Toast as ToastType } from '../../context/StoreContext';
+import { useToast } from '../../context/useStore';
+import type { Toast as ToastType } from '../../context/useStore';
 
 const icons = {
   success: <CheckCircle size={16} />,

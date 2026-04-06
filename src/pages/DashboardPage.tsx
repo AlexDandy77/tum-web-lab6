@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { CheckCircle, Circle, Flame, Trophy, Plus, Sun, CalendarDays } from 'lucide-react';
-import { useActiveHabits, useStore, useToast } from '../context/StoreContext';
+import { useActiveHabits, useStore, useToast } from '../context/useStore';
 import { computeStats, today } from '../lib/streaks';
 import { Badge } from '../components/shared/Badge';
 import { ProgressRing } from '../components/shared/ProgressRing';

@@ -1,6 +1,6 @@
 import { Modal } from '../shared/Modal';
 import { HabitForm } from './HabitForm';
-import { useStore, useToast } from '../../context/StoreContext';
+import { useStore, useToast } from '../../context/useStore';
 import type { Habit } from '../../types';
 
 interface Props {

@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Download, Upload, AlertCircle, CheckCircle } from 'lucide-react';
-import { useStore, useToast } from '../context/StoreContext';
+import { useStore, useToast } from '../context/useStore';
 import { Button } from './shared/Button';
 import { Modal } from './shared/Modal';
 

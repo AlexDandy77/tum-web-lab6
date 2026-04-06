@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Flame, Zap, CheckCircle, BarChart2 } from 'lucide-react';
-import { useActiveHabits, useStore } from '../context/StoreContext';
+import { useActiveHabits, useStore } from '../context/useStore';
 import { computeStats } from '../lib/streaks';
 import { CATEGORY_META, ALL_CATEGORIES } from '../lib/categoryMeta';
 import { Badge } from '../components/shared/Badge';
